@@ -9,6 +9,7 @@ The work includes 3 Parts. Along the code the supplementing project report is pr
 
 On high level the projects include:
 1. Search Algorithms
+
   1.1. Implementation of the following algorithms:
   - Breadth-First Search
   - Uniform-Cost Search
@@ -17,6 +18,7 @@ On high level the projects include:
   - Iterative-Deepening Search
   - A*
   - Monte-Carlo Tree Search
+  
   1.2.
   - implementation of the game Clickomania
   - implementation of two search algorithms to solve the game
