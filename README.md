@@ -21,6 +21,14 @@ On high level the projects include:
   
   1.2.
   - implementation of the game Clickomania
-  - implementation of two search algorithms to solve the game
+  - application of two search algorithms to solve the game
   
 2. Bayesian Networks
+
+  2.1. Structure and Parameter Learning
+  - implementation of K2 Algorithm with two scoring functions (original score and Bayesian Information Criterion)
+  - experiments performed with two datasets
+  2.2. Inference (partially unstable solution)
+  - implementation of Variable Elimination to get a probability for an occurence of a query
+  - application to the two datasets
+
