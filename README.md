@@ -28,7 +28,19 @@ On high level the projects include:
   2.1. Structure and Parameter Learning
   - implementation of K2 Algorithm with two scoring functions (original score and Bayesian Information Criterion)
   - experiments performed with two datasets
+  
   2.2. Inference (partially unstable solution)
   - implementation of Variable Elimination to get a probability for an occurence of a query
   - application to the two datasets
+
+3. ANN
+
+  3.1. ANN Implementation
+  - training allowed with L1 and L2 regularization, and different activation functions for each layer
+  - Feed-forward (returns all results from applying the linear function and the corresponding activation function for every layer) 
+  - Inference (returns the final activation result)
+  - Back-Propagation
+  
+  3.2. Application to MNIST
+  - includes hyper-parameters tuning, experimental results can be found in the report
 
