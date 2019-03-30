@@ -21,14 +21,11 @@ def BFS(Graph, initialState):
     else:
         queue.append((path, Graph.successors(current_node)))
     while queue:
-        # print('queue before pop', queue)
         predec, succ = queue.popleft()
-        # print('checking new level')
-        # print(predec, succ)
+        
         for s in succ:
             if s not in visited:
                 visited.add(s)
-                # print('Next state: ', s)
                 subpath = predec.copy()
                 subpath.append(s)
                 if Graph.isGoal(s):
@@ -42,8 +39,7 @@ def BFS(Graph, initialState):
                     queue.append((subpath.copy(), Graph.successors(s)))
                     # we go to the next child, want to remove the sibling
                     subpath.clear()
-            # else:
-            #   print('Skipping node as it was already visited: ',s)
+            
     print('Goal node not found.')
     return initialState, -1
 
@@ -63,7 +59,6 @@ def UCS(Graph, initialState):
     else:
         queue.append((path, Graph.successors(current_node)))
     while queue:
-        # print('queue before pop', queue)
         predec, succ = queue.popleft()
         succ.sort(key=lambda x: x[0])
 
@@ -71,7 +66,6 @@ def UCS(Graph, initialState):
             # first visit all children on this level
             if s not in visited:
                 visited.add(s)
-                # print('checking successor node: ', s, ' with cost ', cost)
                 subpath = predec.copy()
                 subpath.append(s)
 
@@ -80,13 +74,10 @@ def UCS(Graph, initialState):
                     print_solution(subpath, cost)
                     return subpath, cost
                 else:
-                    # print('subpath: ', subpath, 'cost: ', cost)
                     # will go down the level later, keep track of how we reached there.
                     queue.append((subpath.copy(), Graph.successors(s)))
                     subpath.clear()
-            # else:
-            #   print('Skipping node as it was already visited: ', s)
-
+           
     print('Goal node not found.')
     return initialState, -1
 
@@ -101,12 +92,9 @@ def DFS(Graph, initialState):
     visited = set()
 
     while stack:
-        # print('stack before pop', stack)
         predec, succ = stack.popleft()
-        # print('stack', stack)
         if succ not in visited:
             visited.add(succ)
-            # print('checking successor: ', succ)
             subpath = predec.copy()
             subpath.append(succ)
             if Graph.isGoal(succ):
@@ -114,15 +102,12 @@ def DFS(Graph, initialState):
                 print_solution(subpath, cost)
                 return subpath, cost
             else:
-                # print('subpath',subpath)
                 for s in Graph.successors(succ):
                     # LIFO
                     stack.appendleft((subpath.copy(), s))
                 subpath.clear()
 
-        # else:
-        #   print('Skipping node as it was already visited: ', succ)
-
+     
     print('Goal node not found.')
     return initialState, -1
 
@@ -147,13 +132,11 @@ def recursiveDLS(Graph, current_node, depthLimit, path):
     cutoff = False
     # The root level is level = 0 !
     currentDepth = len(path) - 1
-    #print('path ',path, ' depth ', currentDepth,' limit ',depthLimit)
     if Graph.isGoal(current_node):
         cost = len(path)
         return path, cost
     else:
         if currentDepth == depthLimit:
-            #print('Cutoff occured.')
             return 'cutoff'
         for succ in Graph.successors(current_node):
             path.append(succ)
@@ -177,8 +160,6 @@ def IDS(Graph, initialState):
     path.append(initialState)
     depthLimit = 0
     while True:
-        # print()
-        # print('Checking for depth limit: ', depthLimit)
         result = recursiveDLS(Graph, initialState, depthLimit, path)
         if result != 'cutoff':
             if len(result) != 2:
@@ -215,32 +196,25 @@ def Astar(ValuedGraph, initialState, heuristic):
     while queue:
         predec, succ = queue.popleft()
 
-        # print('succ before f(n) computation: ', succ)
-
         # BEFORE SORTING update edge cost to include the total estimated cost to the nodes
         for idx, ele in enumerate(succ):
             edgeCost, s = ele
             path_until_s = predec.copy()
             path_until_s.append(s)
-            # print('predec', path_until_s)
             cost_until_n = evaluate_weighted_path(ValuedGraph, path_until_s, False)
             if heuristic.__name__ == "ucs_greedy_heuristic":
                 cost_n_to_goal = heuristic(ValuedGraph, s)
             else:
                 cost_n_to_goal = heuristic(s)
-            # print('g(n): ', cost_until_n, ' h(n): ', cost_n_to_goal)
             estimated_total_cost = cost_until_n + cost_n_to_goal
             edgeCost = estimated_total_cost
             succ[idx] = (edgeCost, s)
 
         succ.sort(key=lambda x: x[0])
 
-        # print('Successor states after f(n) computation and sorting: ', succ)
-
         for cost, s in succ:
             if s not in visited:
                 visited.add(s)
-                # print('checking successor node: ',s,' with cost ',cost)
                 subpath = predec.copy()
                 subpath.append(s)
 
@@ -249,7 +223,6 @@ def Astar(ValuedGraph, initialState, heuristic):
                     print_solution(subpath, cost)
                     return subpath, cost
                 else:
-                    # print('subpath: ',subpath, 'cost: ', cost)
                     queue.append((subpath.copy(), ValuedGraph.successors(s)))
                     subpath.clear()
 
@@ -282,7 +255,6 @@ def get_current_coord(state):
     ind_x = 0
     ind_y = 0
     dimensions = int(math.sqrt(len(state)))
-    # print(dimensions)
     count = 1
     for ele in state:
         if count % dimensions == 0:
@@ -302,7 +274,6 @@ def get_target_coord(state):
     ind_x = 0
     ind_y = 0
     dimensions = int(math.sqrt(len(state)))
-    # print(dimensions)
     count = 1
     for i in range(len(state) - 1):
         if count % dimensions == 0:
@@ -330,18 +301,12 @@ def MCTS(ValuedGraph, state, budget):
         dict_rewards[node] = 0
 
     for i in range(budget):
-        # print()
-        #print('Simulation', i)
         node_to_visit = tree_policy(state, successors, dict_visit_frq, dict_rewards)
         reward = default_policy(ValuedGraph, state, node_to_visit)
 
         # Update node information:
         dict_visit_frq[node_to_visit] = dict_visit_frq[node_to_visit] + 1
         dict_rewards[node_to_visit] = dict_rewards[node_to_visit] + reward
-
-        # dict_visit_frq, dict_rewards = backup(path, delta, dict_visit_frq, dict_rewards)
-        # print('visit frq states after simulation: ', dict_visit_frq)
-        # print('rewards per node after simulation: ', dict_rewards)
 
     # interested only in succ nodes
     dict_visit_frq = {succ_node: dict_visit_frq[succ_node] for succ_node in successors}
@@ -364,9 +329,7 @@ def tree_policy(state, successors, dict_visit_frq, dict_rewards):
             + (1 / math.sqrt(2)) * math.sqrt(2 * math.log(nr_times_state_visited) / nr_times_visited)
             scores.append(score)
 
-    # print('Scores for each successor in tree policy: ', scores)
     best_child = successors[scores.index(max(scores))]
-    # print('Selected successor in Tree Policy: ', best_child)
     return best_child
 
 
@@ -385,7 +348,6 @@ def default_policy(ValuedGraph, state, node_to_visit):
         current_node = random.choice(actions)[1]
         while current_node in visited:
             current_node = random.choice(actions)[1]
-        # print('Random action chosen in default policy: ', current_node)
         path.append(current_node)
         visited.append(current_node)
         actions = ValuedGraph.successors(current_node)
@@ -393,7 +355,6 @@ def default_policy(ValuedGraph, state, node_to_visit):
     cost = evaluate_weighted_path(ValuedGraph, path, False)
     # Idea: the smaller the cost, the bigger the reward (cost being the distance)
     reward = 1 / cost
-    # print('Cost and reward for the node: ', cost, reward)
 
     return round(reward, 3)
 
@@ -423,7 +384,6 @@ def iterative_MCTS_npuzzle(graphV, initial_state, number_sumulations):
 
     while not graphV.isGoal(current_state):
         next_state = MCTS(graphV, current_state, number_sumulations)
-        #print('Checking next state: ', next_state)
         path.append(next_state)
         current_state = next_state
     if graphV.isGoal(path):
@@ -470,7 +430,6 @@ def evaluate_weighted_path(GraphV, path, verbose=True):
 
 
 def get_cost_to_n(successors, target):
-    # print(successors, target)
     cost = [item for item in successors if item[1] == target]
     return cost[0][0]
 
